@@ -12,3 +12,19 @@ humans comprehend English.
 stanford.cs143.compiler
 harvard.cs153.compiler
 
+
+
+
+解析与  自动下推机 Push-down 。 加stack的状态机。 
+
+
+
+Syntax vs. Semantics:
+syntax concerns the form of a valid program
+(described conveniently by a context-free grammar
+CFG)
+semantics concerns its meaning: rules that go beyond
+mere form (e.g., the number of arguments contained
+in a call to a subroutine matches the number of formal
+parameters in the subroutine definition – cannot be
+counted using CFG, type consistency):
