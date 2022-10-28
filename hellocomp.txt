@@ -1,0 +1,13 @@
+The Structure of a Compiler
+1. Lexical Analysis  — identify words
+2. Parsing — identify sentences
+3. Semantic Analysis  — analyse sentences
+4. Optimization  — editing
+5. Code Generation — translation
+
+Can be understood by analogy to how 
+humans comprehend English.
+
+
+
+
