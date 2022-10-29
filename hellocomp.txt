@@ -28,3 +28,95 @@ mere form (e.g., the number of arguments contained
 in a call to a subroutine matches the number of formal
 parameters in the subroutine definition – cannot be
 counted using CFG, type consistency):
+
+
+https://www.philadelphia.edu.jo/it/PDF%20Files/cs/750421le.pdf
+Grouping of Compiler Phases
+• Front end
+Consist of those phases that depend on
+the source language but largely
+independent of the target machine.
+• Back end
+ Consist of those phases that are usually
+target machine dependent such as
+optimization and code generation. 
+
+
+
+
+• First Fortran compiler took 18 person-years.
+Now with compiler construction tools, you
+may build one in a semester.
+• Translator writing tools:
+– Scanner generator
+– Parser generator
+– Syntax directed translation engines
+– Automatic code generator
+– Data flow analyzer generator
+
+
+–Compilers—Principles, Techniques and Tools.
+Aho, Lam, Sethi and Ullman (Te Dragon Book)
+(strength: parsing and analysis)
+–Modern Compiler Implementation in Java.
+Andrew Appel.
+(strength: translation)
+–Advanced Compiler Design and Implementation.
+Steve Muchnick.
+(strength: analysis and optimization)
+
+
+Required Textbook
+
+Compilers: Principles, Techniques, & Tools, 2/E, by Alfred V. Aho, Monica S. Lam, Ravi Sethi and Jeffrey D. Ullman, Addison Wesley, 2007. ISBN: 9-780-321-486-813
+
+ 
+
+Reference Textbooks
+
+1.     Compiler Construction: Principles and Practice, by Kenneth C. Louden, PWS Publishing Company, 1997
+
+2.     flex & bison: Text Processing Tools, by John Levine, O'Reilly Media, Inc., 2009
+
+3.     Modern Compiler Implementation in Java, 2/E, by Andrew W. Appel and Jens Palsberg, Cambridge University Press, 2002
+
+4.     Modern Compiler Implementation in C, by Andrew W. Appel and Maia Ginsburg, Cambridge University Press, 2004
+
+5.     Advanced Compiler Design and Implementation, by Muchnick Steven, Morgan Kaufmann, 2008
+
+6.     Engineering a Compiler, 2nd Edition, by Keith Cooper and Linda Torczon, Addison Wesley, 2011
+
+
+
+------------
+Department of Computer Science
+CSU Stanislaus
+California State University
+
+CS4300-001: Compiler Theory
+
+Fall 2020
+
+ 
+
+Instructor: Dr. Xuejun Liang
+
+My Office: DBH 282
+
+Office Hours: MWF 10:00AM-11:00AM (ZOOM Meeting ID 4438930033)
+
+Phone : (209) 667-3169, Email: xliang@cs.csustan.edu
+------------
+
+
+A grammar derives strings (called derivation) by 
+– beginning with the start symbol and repeatedly
+– replacing a nonterminal by the body of a production for 
+that nonterminal. 
+• The terminal strings that can be derived from the start 
+symbol form the language defined by the grammar
+• Parsing is the problem of taking a string of terminals 
+and figuring out how to derive it from the start symbol 
+of the grammar, and if it cannot be derived from the 
+start symbol of the grammar, then reporting syntax 
+errors within the string.
