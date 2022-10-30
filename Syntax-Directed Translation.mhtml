@@ -1,0 +1,719 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: https://pages.cs.wisc.edu/~fischer/cs536.s06/course.hold/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html
+Subject: Syntax-Directed Translation
+Date: Sat, 29 Oct 2022 11:57:09 -0000
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--NtTNvriEfYrOw0Al0zaQTvuBAboQoQXTxNjH2oBNMK----"
+
+
+------MultipartBoundary--NtTNvriEfYrOw0Al0zaQTvuBAboQoQXTxNjH2oBNMK----
+Content-Type: text/html
+Content-ID: <frame-DECE3E6470E716D0BB4B808A711C915A@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://pages.cs.wisc.edu/~fischer/cs536.s06/course.hold/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html
+
+<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; charset=
+=3Dwindows-1252"> <title>Syntax-Directed Translation</title> </head>
+
+<body><p><a name=3D"top"> </a></p><h1><a name=3D"top">Syntax-Directed Trans=
+lation</a></h1>
+
+<hr>
+<h2>Contents</h2>
+
+<ul>
+  <li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course.hold/h=
+tml/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#overview">Motivation and Defin=
+ition</a>
+  </li><li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course.h=
+old/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#ex1">Example 1: Value of =
+an Arithmetic Expression</a>
+  </li><li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course.h=
+old/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#ex2">Example 2: Type of a=
+n Expression</a>
+  </li><li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course.h=
+old/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#youtry1">Test Yourself #1=
+</a>
+  </li><li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course.h=
+old/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#ast">Building an Abstract=
+-Syntax Tree</a>
+    <ul>
+    <li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course.hold=
+/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#astVsParse">The AST vs the P=
+arse Tree</a>
+    </li><li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course=
+.hold/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#trans">Translation Rule=
+s That Build an AST</a>
+    </li><li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course=
+.hold/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#youtry2">Test Yourself =
+#2</a>
+    </li></ul>
+  </li><li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course.h=
+old/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#pre">Syntax-Directed Tran=
+slation and Predictive Parsing</a>
+    <ul>
+    <li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course.hold=
+/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#ex3">Example 3: Counting Par=
+entheses</a>
+    </li><li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course=
+.hold/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#youtry3">Test Yourself =
+#3</a>
+    </li><li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course=
+.hold/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#nonLL1">Handling Non-LL=
+(1) Grammars"&gt;</a>
+    </li><li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course=
+.hold/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#youtry4">Test Yourself =
+#4</a>
+    </li></ul>
+  </li><li><a href=3D"https://pages.cs.wisc.edu/~fischer/cs536.s06/course.h=
+old/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html#summ">Summary</a>
+</li></ul>
+
+<p>
+<a name=3D"overview">
+</a></p><h1><a name=3D"overview">Motivation and Definition</a></h1><a name=
+=3D"overview">
+<p>
+Recall that the parser must produce output (e.g., an abstract-syntax
+tree) for the next phase of the compiler.
+This involves doing a <b>syntax-directed translation</b> -- translating
+from a sequence of tokens to some other form, based on the underlying
+syntax.
+</p><p>
+A syntax-directed translation is defined by augmenting the CFG:
+a <b>translation rule</b> is defined for each production.
+A translation rule defines the translation of the left-hand side nontermina=
+l
+as a function of:
+</p><ul>
+  <li> constants
+  </li><li> the right-hand-side nonterminals' translations
+  </li><li> the right-hand-side tokens' values (e.g., the integer value
+       associated with an INTLIT token, or the String value associated
+       with an ID token)
+</li></ul>
+To translate an input string:
+<ol>
+  <li> Build the parse tree.
+  </li><li> Use the translation rules to compute the translation of each no=
+nterminal
+       in the tree, working bottom up (since a nonterminal's value may depe=
+nd
+       on the value of the symbols on the right-hand side, you need to work
+       bottom-up so that those values are available).
+</li></ol>
+The translation of the string is the translation of the parse tree's root
+nonterminal.
+</a><p><a name=3D"overview">
+</a><a name=3D"ex1">
+</a></p><h1><a name=3D"ex1">Example 1</a></h1><a name=3D"ex1">
+<p>
+Below is the definition of a syntax-directed translation that
+translates an arithmetic expression to its integer value.
+When a nonterminal occurs more than once in a grammar rule, the
+corresponding translation rule uses subscripts to identify a
+particular instance of that nonterminal.
+For example, the rule <tt>exp -&gt; exp + term</tt> has two <tt>exp</tt> no=
+nterminals;
+<tt>exp<sub>1</sub></tt> means the left-hand-side <tt>exp</tt>, and
+<tt>exp<sub>2</sub></tt> means the right-hand-side <tt>exp</tt>.
+Also, the notation <tt>xxx.value</tt> is used to mean the value associated
+with token <tt>xxx</tt>.
+</p><pre>        CFG                          Translation rules
+        =3D=3D=3D                          =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+        exp    -&gt; exp + term         exp<sub>1</sub>.trans =3D exp<sub>2=
+</sub>.trans + term.trans
+        exp    -&gt; term               exp.trans  =3D term.trans
+        term   -&gt; term * factor      term<sub>1</sub>.trans =3D term<sub=
+>2</sub>.trans * factor.trans
+        term   -&gt; factor             term.trans  =3D factor.trans
+        factor -&gt; INTLITERAL         factor.trans  =3D INTLITERAL.value
+        factor -&gt; ( exp )            factor.trans  =3D exp.trans
+
+
+	Input
+	=3D=3D=3D=3D=3D
+        2 * (4 + 5)
+
+
+	Annotated Parse Tree
+	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+                 exp (18)
+                  |
+                 term (18)
+                 /|\
+                / | \
+               /  *  \
+              /     factor (9)
+             /       /|\
+      (2) term      ( | )
+            |         |
+      (2) factor     exp(9)
+            |        /|\
+            2       / | \
+                   /  |  \
+             (4) exp  +  term (5)
+                  |       |
+            (4) factor  factor (5)
+                  |       |
+                  4       5
+</pre>
+</a><p><a name=3D"ex1">
+</a><a name=3D"ex2">
+</a></p><h1><a name=3D"ex2">Example 2</a></h1><a name=3D"ex2">
+<p>
+Consider the following CFG, which defines expressions that use
+the three operators: +, &amp;&amp;, =3D=3D.
+Let's define a syntax-directed translation that type checks these
+expressions; i.e., for type-correct expressions, the translation
+will be the type of the expression (either INT or BOOL), and
+for expressions that involve type errors, the translation will be
+the special value ERROR.
+We'll use the following type rules:
+</p><ol>
+  <li> Both operands of the + operator must be of type INT.
+  </li><li> Both operands of the &amp;&amp; operator must be of type BOOL.
+  </li><li> Both operands of the =3D=3D operator have the same (non-ERROR) =
+type.
+</li></ol>
+
+Here is the CFG and the translation rules:
+<pre>        CFG                     Translation rules
+        =3D=3D=3D                     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+        exp -&gt; exp + term        if ((exp<sub>2</sub>.trans =3D=3D INT) =
+and (term.trans =3D=3D INT)
+                                 then exp<sub>1</sub>.trans =3D INT
+                                 else exp<sub>1</sub>.trans =3D ERROR
+
+        exp -&gt; exp &amp;&amp; term       if ((exp<sub>2</sub>.trans =3D=
+=3D BOOL) and (term.trans =3D=3D BOOL)
+                                 then exp<sub>1</sub>.trans =3D BOOL
+                                 else exp<sub>1</sub>.trans =3D ERROR
+
+        exp -&gt; exp =3D=3D term       if ((exp<sub>2</sub>.trans =3D=3D t=
+erm.trans) and (exp<sub>2</sub>.trans !=3D ERROR))
+                                 then exp<sub>1</sub>.trans =3D BOOL
+                                 else exp<sub>1</sub>.trans =3D ERROR
+
+        exp -&gt; term              exp.trans =3D term.trans
+
+        term -&gt; true             term.trans =3D BOOL
+        term -&gt; false            term.trans =3D BOOL
+        term -&gt; intliteral       term.trans =3D INT
+        term -&gt; ( exp )          term.trans =3D exp.trans
+
+
+        Input
+        =3D=3D=3D=3D=3D
+        ( 2 + 2 ) =3D=3D 4
+
+
+        Annotated Parse Tree
+        =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+                 exp (BOOL)
+                 /|\
+                / | \
+        (INT) exp =3D=3D term (INT)
+               |      |
+               |      4
+        (INT) term
+              /|\
+             / | \
+            /  |  \
+           (  exp   )
+             (INT)
+              /|\
+             / | \
+    (INT) exp  +  term (INT)
+           |       |
+     (INT) term    2
+           |
+           2
+</pre>
+<p>
+</p><hr>
+</a><a name=3D"youtry1">
+<p>
+</p><center>
+<u><b>TEST YOURSELF #1</b></u>
+</center></a>
+<p>
+The following grammar defines the language of base-2 numbers:
+</p><ul>
+<pre>B -&gt; 0
+  -&gt; 1
+  -&gt; B 0
+  -&gt; B 1
+</pre>
+</ul>
+Define a syntax-directed translation so that the translation of a binary
+number is its base 10 value.
+Illustrate your translation scheme by drawing the parse tree for
+<tt>1001</tt> and annotating each nonterminal in the tree with
+its translation.      =20
+<hr>
+<p>
+<a name=3D"ast">
+</a></p><h1><a name=3D"ast">Building an Abstract-Syntax Tree</a></h1><a nam=
+e=3D"ast">
+<p>
+So far, our example syntax-directed translations have produced simple
+values (an int or a type) as the translation of an input.
+In practice however, we want the parser to build an abstract-syntax tree
+as the translation of an input program.
+But that is not really so different from what we've seen so far;
+we just need to use tree-building operations in the translation
+rules instead of, e.g., arithmetic operations.
+</p></a><p><a name=3D"ast">
+</a><a name=3D"astVsParse">
+</a></p><h2><a name=3D"astVsParse">The AST vs the Parse Tree</a></h2><a nam=
+e=3D"astVsParse">
+<p>
+First, let's consider how an abstract-syntax tree (AST) differs
+from a parse tree.
+An AST can be thought of as a <em>condensed</em> form of the parse tree:
+</p><ul>
+  <li> Operators appear at <em>internal</em> nodes instead of at leaves.
+  </li><li> "Chains" of single productions are collapsed.
+  </li><li> Lists are "flattened".
+  </li><li> Syntactic details (e.g., parentheses, commas, semi-colons) are
+       omitted.
+</li></ul>
+In general, the AST is a better structure for later stages of the compiler
+because it omits details having to do with the source language, and just
+contains information about the essential structure of the program.
+<p>
+Below is an example of the parse tree and the AST for the expression
+<tt>3 * (4 + 2)</tt> (using the usual arithmetic-expression grammar that
+reflects the precedences and associativities of the operators).
+Note that the parentheses are not needed in the AST because the structure o=
+f
+the AST defines how the subexpressions are grouped.
+</p><ul>
+<pre>Parse Tree               Abstract Syntax Tree
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D		 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+
+       exp                          *          =20
+        |                          / \         =20
+      term                        3   +
+       /|\                           / \       =20
+   term * factor                    4   2
+    |    /|\
+    |   / | \
+factor ( exp )
+  |      /|\
+  3   exp + term
+       |      |
+     term   factor
+       |      |
+     factor   2
+       |
+       4
+</pre>
+</ul>
+<p>
+For constructs other than expressions, the compiler writer has some choices
+when defining the AST -- but remember that lists (e.g., lists of declaratio=
+ns
+lists of statements, lists of parameters) should be flattened, that operato=
+rs
+(e.g., "assign", "while", "if") go at internal nodes, not at leaves, and
+that syntactic details are omitted.
+</p><p>
+For example:
+</p><ul>
+<pre>Input                                  Parse Tree
+=3D=3D=3D=3D=3D                                  =3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+
+{                                ____ methodBody _________
+   x =3D 0;                       /       /            \    \
+   while (x&lt;10) {              {  declList        stmtList }
+      x =3D x+1;                       |           /        \
+   }                              epsilon   stmtList       stmt___
+   y =3D x*2;                                /      \       /  | \  \
+}                                     stmtList   stmt    ID  =3D exp ;
+                                     /      |        \   (y)  / | \
+                             stmtList      stmt    ...     exp  * term
+                               |          / | | \            |     |
+                            epsilon     ID  =3D exp ;         term  factor
+                                        (x)    |             |      |
+                                              INTLITERAL   factor  INT
+					         (0)         |     (2)
+						             ID
+							     (x)
+
+
+                        AST
+                        =3D=3D=3D
+
+                        methodBody
+                       /          \
+               declList		   stmtList
+                                  /   |    \
+                            assign  while   assign
+                            /     \  ...    /     \
+			  ID     INT      ID       *
+			  (x)    (0)      (y)     / \
+						 ID  INT
+						 (x) (2)
+</pre>
+</ul>
+Note that in the AST there is just one <tt>stmtList</tt> node, with a list =
+of three
+children (the list of statements has been "flattened").
+Also, the "operators" for the statements (<tt>assign</tt> and
+<tt>while</tt>) have been "moved up" to internal nodes (instead of
+appearing as tokens at the leaves).
+And finally, syntactic details (curly braces and semi-colons)
+have been omitted.
+</a><p><a name=3D"astVsParse">
+</a><a name=3D"trans">
+</a></p><h2><a name=3D"trans">Translation Rules That Build an AST</a></h2><=
+a name=3D"trans">
+<p>
+To define a syntax-directed translation so that the translation of an input
+is the corresponding AST, we first need operations that create AST nodes.
+Let's use java code, and assume that we have the following class hierarchy:
+</p><ul>
+<pre>class ExpNode { }
+
+class IntLitNode extends ExpNode {
+    public IntLitNode(int val) {...}
+}
+
+class PlusNode extends ExpNode {
+    public PlusNode( ExpNode e1, ExpNode e2 ) { ... }
+}
+
+class TimesNode extends ExpNode {
+    public TimesNode( ExpNode e1, ExpNode e2 ) { ... }
+}
+</pre>
+</ul>
+Now we can define a syntax-directed translation for simple arithmetic expre=
+ssions,
+so that the translation of an expression is its AST:
+<ul>
+<pre>CFG                      Translation rules
+=3D=3D=3D                      =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+exp    -&gt; exp + term     exp<sub>1</sub>.trans =3D new PlusNode(exp<sub>=
+2</sub>.trans, term.trans)
+exp    -&gt; term           exp.trans  =3D term.trans
+term   -&gt; term * factor  term<sub>1</sub>.trans =3D new TimesNode(term<s=
+ub>2</sub>.trans, factor.trans)
+term   -&gt; factor         term.trans  =3D factor.trans
+factor -&gt; INTLITERAL     factor.trans  =3D new IntLitNode(INTLITERAL.val=
+ue)
+factor -&gt; ( exp )        factor.trans  =3D exp.trans
+</pre>
+</ul>
+<hr>
+</a><a name=3D"youtry2">
+<p>
+</p><center>
+<u><b>TEST YOURSELF #2</b></u>
+</center></a>
+<p>
+Illustrate the syntax-directed translation defined above by drawing the
+parse tree for the expression <tt>2 + 3 * 4</tt>, and annotating the
+parse tree with its translation (i.e., each nonterminal in the tree will ha=
+ve
+a pointer to the AST node that is the root of the subtree of the AST that
+is the nonterminal's translation).
+
+
+</p><hr>
+
+<p>
+<a name=3D"pre">
+</a></p><h1><a name=3D"pre">Syntax-Directed Translation and Predictive Pars=
+ing</a></h1><a name=3D"pre">
+<p>
+Now we consider how to implement a syntax-directed translation using
+a predictive parser.
+It is not obvious how to do this, since the predictive parser works by
+building the parse tree top-down, while the syntax-directed translation
+needs to be computed bottom-up.
+Of course, we could design the parser to actually build the parse tree
+(top-down), then use the translation rules to build the translation
+(bottom-up).
+However, that would not be very efficient.
+</p><p>
+Instead, we avoid explicitly building the parse tree by giving the parser
+a second stack called the <b>semantic stack</b>:
+</p><ul>
+  <li> The semantic stack holds nonterminals' translations; when the parse
+       is finished, it will hold just one value: the translation of the
+       root nonterminal (which is the translation of the whole input).
+  </li><li> Values are pushed onto the semantic stack (and popped off) by
+       adding <b>actions</b> to the grammar rules.  The action for one
+       rule must:
+       <ul>
+         <li> Pop the translations of all right-hand-side nonterminals.
+	 </li><li> Compute and push the translation of the left-hand-side
+	      nonterminal.
+       </li></ul>
+  </li><li> The actions themselves are represented by <b>action numbers</b>=
+,
+       which become part of the right-hand sides of the grammar rules.
+       They are pushed onto the (normal) stack along with the terminal
+       and nonterminal symbols.  When an action number is the top-of-stack
+       symbol, it is popped and the action is carried out.
+</li></ul>
+So what actually happens is that the action for a grammar rule=20
+<tt>X -&gt; Y<sub>1</sub> Y<sub>2</sub> ... Y<sub>n</sub></tt>
+is pushed onto the (normal) stack when the derivation step
+<tt>X -&gt; Y<sub>1</sub> Y<sub>2</sub> ... Y<sub>n</sub></tt> is made,
+but the action is not actually performed until complete derivations for all
+of the <tt>Y</tt>'s have been carried out.
+</a><p><a name=3D"pre">
+</a><a name=3D"ex3">
+</a></p><h2><a name=3D"ex3">Example: Counting Parentheses</a></h2><a name=
+=3D"ex3">
+<p>
+For example, consider the following syntax-directed translation for the
+language of balanced parentheses and square brackets.
+The translation of a string in the language is the number of parenthesis
+pairs in the string.
+</p><ul>
+<pre>CFG                          Translation Rules
+=3D=3D=3D			     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+exp -&gt; epsilon		     exp.trans =3D 0
+    -&gt; ( exp )               exp<sub>1</sub>.trans =3D exp<sub>2</sub>.t=
+rans + 1
+    -&gt; [ exp ]		     exp<sub>1</sub>.trans =3D exp<sub>2</sub>.trans
+</pre>
+</ul>
+The first step is to replace the translation rules with <b>translation
+actions</b>.
+Each action must:
+<ul>
+  <li> Pop all right-hand-side nonterminals' translations from the
+       semantic stack.
+  </li><li> Compute and push the left-hand-side nonterminal's translation.
+</li></ul>
+Here are the translation actions:
+<ul>
+<pre>CFG                          Translation Actions
+=3D=3D=3D			     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+exp -&gt; epsilon		     push(0);
+    -&gt; ( exp )               exp2Trans =3D pop(); push( exp2Trans + 1 );
+    -&gt; [ exp ]		     exp2Trans =3D pop(); push( exp2Trans );
+</pre>
+</ul>
+Next, each action is represented by a unique action number, and those
+action numbers become part of the grammar rules:
+<ul>
+<pre>CFG with Actions
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+exp -&gt; epsilon #1
+    -&gt; ( exp ) #2
+    -&gt; [ exp ] #3
+
+#1: push(0);
+#2: exp2Trans =3D pop(); push( exp2Trans + 1 );
+#3: exp2Trans =3D pop(); push( exp2Trans );
+</pre>
+</ul>
+<p>
+Note that since action #3 just pushes exactly what is popped, that action
+is redundant, and it is not necessary to have any action associated with
+the third grammar rule.
+Here's a picture that illustrates what happens when the input "([])" is
+parsed (assuming that we have removed action #3):
+</p><pre>   input so far   stack            semantic stack  action
+   ------------   -----            --------------  ------
+      (           exp EOF                          pop, push "( exp ) #2"
+      (           (exp) #2 EOF                     pop, scan
+      ([          exp) #2 EOF                      pop, push "[ exp ]"
+      ([          [exp] ) #2 EOF                   pop, scan
+      ([]         exp] ) #2 EOF                    pop, push epsilon #1
+      ([]         #1 ] ) #2 EOF                    pop, do action
+      ([]	  ] ) #2 EOF         0             pop, scan
+      ([])        ) #2 EOF           0             pop, scan
+      ([]) EOF    #2 EOF             0             pop, do action
+      ([]) EOF    EOF                1             pop, scan
+      ([]) EOF			                   empty stack: input accepted!
+                                                   translation of input =3D=
+ 1
+</pre>
+<p>
+In the example above, there is no grammar rule with more than one
+nonterminal on the right-hand side.
+If there were, the translation action for that rule would have to
+do one pop for each right-hand-side nonterminal.
+For example, suppose we are using a grammar that includes the rule:
+<tt>methodBody -&gt; { varDecls stmts }</tt>, and that the
+syntax-directed translation is counting the number of declarations
+and statements in each method body (so the translation of <tt>varDecls</tt>
+is the number of derived declarations, the translation of <tt>stmts</tt>
+is the number of derived statements, and the translation of
+<tt>methodBody</tt> is the number of derived declarations and statements).
+</p><ul>
+<pre>CFG Rule:              methodBody -&gt; { varDecls stmts }
+Translation Rule:      methodBody.trans =3D varDecls.trans + stmts.trans
+Translation Action:    stmtsTrans =3D pop(); declsTrans =3D pop();
+	               push( stmtsTrans + declsTrans );
+CFG rule with Action:  methodBody -&gt; { varDecls stmts } #1
+                       #1: stmtsTrans =3D pop();
+		           declsTrans =3D pop();
+			   push( stmtsTrans + declsTrans );
+
+</pre>
+</ul>
+Note that the right-hand-side nonterminals' translations are popped from
+the semantic stack <em>right-to-left</em>.
+That is because the predictive parser does a leftmost derivation,
+so the <tt>varDecls</tt> nonterminal gets "expanded" first;
+i.e., its parse tree is created before the parse tree for the
+<tt>stmts</tt> nonterminal.
+This means that the actions that create the translation of the
+<tt>varDecls</tt> nonterminal are performed first, and thus its
+translation is pushed onto the semantic stack first.
+<p>
+Another issue that has not been illustrated yet arises when a
+left-hand-side nonterminal's translation depends on the value of a
+right-hand-side <em>terminal</em>.
+In that case, it is important to put the action number <em>before</em>
+that terminal symbol when incorporating actions into grammar rules.
+This is because a terminal symbol's value is available during the parse
+only when it is the "current token".
+For example, if the translation of an arithmetic expression is the
+value of the expression:
+</p><ul>
+<pre>CFG Rule:              factor -&gt; INTLITERAL
+Translation Rule:      factor.trans =3D INTLITERAL.value
+Translation Action:    push( INTLITERAL.value )
+CFG rule with Action:  factor -&gt; #1 INTLITERAL       // action BEFORE te=
+rminal
+                       #1: push( currToken.value )
+</pre>
+</ul>
+<hr>
+</a><a name=3D"youtry3">
+<p>
+</p><center>
+<u><b>TEST YOURSELF #3</b></u>
+</center></a>
+<p>
+For the following grammar, give (a) translation rules, (b) translation
+actions, and (c) a CFG with actions so that the translation of an
+input expression is the value of the expression.
+Do not worry about the fact that the grammar is not LL(1).
+</p><ul>
+<pre>exp    -&gt; exp + term
+       -&gt; exp - term
+       -&gt; term
+term   -&gt; term * factor
+       -&gt; term / factor
+       -&gt; factor
+factor -&gt; INTLITERAL
+       -&gt; ( exp )
+</pre>
+</ul>
+<hr>
+<p>
+<a name=3D"nonLL1">
+</a></p><h2><a name=3D"nonLL1">Handling Non-LL(1) Grammars</a></h2><a name=
+=3D"nonLL1">
+<p>
+Recall that a non-LL(1) grammar must be transformed to an equivalent
+LL(1) grammar if it is to be parsed using a predictive parser.
+Recall also that the transformed grammar usually
+does not reflect the underlying structure the way the original grammar did.
+For example, when left recursion is removed from the grammar for
+arithmetic expressions, we get grammar rules like this:
+</p><ul>
+<pre>exp  -&gt; term exp'
+exp' -&gt; epsilon
+     -&gt; + term exp'
+</pre>
+</ul>
+It is not at all clear how to define
+a syntax-directed translation for rules like these.
+The solution is to define the syntax-directed translation
+using the <em>original</em> grammar (define translation rules,
+convert them to actions that push and pop using the semantic stack, and
+then incorporate the action numbers into the grammar rules).
+Then convert the grammar to be LL(1), <em>treating the action numbers
+just like grammar symbols</em>!
+<p>
+For example:
+</p><ul>
+<pre>Non-LL(1) Grammar Rules With Actions
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+exp  -&gt; exp + term #1
+     -&gt; term
+term -&gt; term * factor #2
+     -&gt; factor
+
+#1: TTrans =3D pop(); ETrans =3D pop(); push Etrans + TTrans;
+#2: FTrans =3D pop(); TTrans =3D pop(); push Ttrans * FTrans;
+
+After Removing Immediate Left Recursion
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+exp  -&gt; term exp'
+exp' -&gt; + term #1 exp'
+     -&gt; epsilon
+
+term  -&gt; factor term'
+term' -&gt; * factor #2 term'
+      -&gt; epsilon
+</pre>
+</ul>
+<hr>
+</a><a name=3D"youtry4">
+<p>
+</p><center>
+<u><b>TEST YOURSELF #4</b></u>
+</center></a>
+<p>
+Transform the grammar rules with actions that you wrote for the
+"Test Yourself #3" exercise to LL(1) form.
+Trace the actions of the predictive parser on the input <tt>2 + 3 * 4</tt>.
+</p><hr>
+<p>
+<a name=3D"summ">
+</a></p><h1><a name=3D"summ">Summary</a></h1><a name=3D"summ">
+<p>
+A <b>syntax-directed translation</b> is used to define the translation of a
+sequence of tokens to some other value, based on a CFG for the input.
+A syntax-directed translation is defined by associating a translation
+rule with each grammar rule.
+A translation rule defines the translation of the left-hand-side
+nonterminal as a function of the right-hand-side nonterminals' translations=
+,
+and the values of the right-hand-side terminals.
+To compute the translation of a string, build the parse tree, and use
+the translation rules to compute the translation of each nonterminal
+in the tree, bottom-up; the translation of the string is the
+translation of the root nonterminal.
+</p><p>
+There is no restriction on the type of a translation;
+it can be a simple type like an integer, or a complex type list an
+abstract-syntax tree.
+</p><p>
+To <b>implement</b> a syntax-directed translation using a predictive parser=
+,
+the translation rules are converted to actions that manipulate the
+parser's <b>semantic stack</b>.
+Each action must pop all right-hand-side nonterminals' translations from
+the semantic stack, then compute and push the left-hand-side nonterminal's
+translation.
+Next, the actions are incorporated (as action numbers) into the grammar rul=
+es.
+Finally, the grammar is converted to LL(1) form (treating the action number=
+s
+just like terminal or nonterminal symbols).
+</p></a></body></html>
+------MultipartBoundary--NtTNvriEfYrOw0Al0zaQTvuBAboQoQXTxNjH2oBNMK------

@@ -120,3 +120,229 @@ and figuring out how to derive it from the start symbol
 of the grammar, and if it cannot be derived from the 
 start symbol of the grammar, then reporting syntax 
 errors within the string.
+
+
+
+=============================
+
+Syntax directed translation
+
+
+Grammar + semantic rule = SDT (syntax directed translation)  
+
+Syntax directed translation scheme
+The Syntax directed translation scheme is a context -free grammar.
+The syntax directed translation scheme is used to evaluate the order of semantic rules.
+In translation scheme, the semantic rules are embedded within the right side of the productions.
+The position at which an action is to be executed is shown by enclosed between braces. It is written within the right side of the production.
+
+
+Annotated Parse Tree
+	====================
+
+                 exp (18)
+                  |
+                 term (18)
+                 /|\
+                / | \
+               /  *  \
+              /     factor (9)
+             /       /|\
+      (2) term      ( | )
+            |         |
+      (2) factor     exp(9)
+            |        /|\
+            2       / | \
+                   /  |  \
+             (4) exp  +  term (5)
+                  |       |
+            (4) factor  factor (5)
+                  |       |
+                  4       5
+
+
+
+https://pages.cs.wisc.edu/~fischer/cs536.s06/course.hold/html/NOTES/4.SYNTAX-DIRECTED-TRANSLATION.html
+
+
+Thread Scheduler in Java
+
+
+The Intermediate Code Generator
+The intermediate code generator translates from abstract-syntax tree to intermediate code. One possibility is 3-address code (code in which each instruction involves at most 3 operands). Below is an example of 3-address code for the abstract-syntax tree shown above. Note that in this example, the first three instructions each have exactly three operands (the location where the result of the operation is stored, and two operators); the fourth instruction has just two operands ("position" and "temp3").
+
+		temp1 = inttofloat(60)
+		temp2 = rate * temp1
+		temp3 = initial + temp2
+		position = temp3
+
+
+What is syntax-directed translation?
+‣ The compilation process is driven by the syntax.
+‣ The semantic routines perform interpretation based on
+the syntax structure.
+‣ Attaching attributes to the grammar symbols.
+‣ Values for attributes are computed by semantic
+actions associated with the grammar productions.
+
+
+
+We work with parse trees
+even though a translator needs not
+actually build a parse tree.
+
+
+A parse tree + the value(s) of its attribute(s):
+annotated parse tree
+
+
+Semantic Analysis computes additional information related to the meaning
+of the program once the syntactic structure is known.
+• In typed languages as C, semantic analysis involves adding information to
+the symbol table and performing type checking.
+• The information to be computed is beyond the capabilities of standard
+parsing techniques, therefore it is not regarded as syntax.
+• As for Lexical and Syntax analysis, also for Semantic Analysis we need both
+a Representation Formalism and an Implementation Mechanism.
+• As representation formalism this lecture illustrates what are called Syntax
+Directed Translations.
+
+
+Semantic Rules
+
+
+Evaluation of Semantic Rules may:
+– Generate Code;
+– Insert information into the Symbol Table;
+– Perform Semantic Check;
+– Issue error messages;
+– etc.
+
+
+https://cse.iitkgp.ac.in/~bivasm/notes/SDD.pdf
+Implementing a Syntax Directed Definition consists primarily in finding an
+order for the evaluation of attributes
+– Each attribute value must be available when a computation is performed.
+
+
+• Dependency Graphs are the most general technique used to evaluate syntax
+directed definitions with both synthesized and inherited attributes.
+• A Dependency Graph shows the interdependencies among the attributes of
+the various nodes of a parse-tree.
+
+
+依赖图  解决属性的赋值问题
+• Dependency Graphs are the most general technique used to evaluate syntax
+directed definitions with both synthesized and inherited attributes.
+• A Dependency Graph shows the interdependencies among the attributes of
+the various nodes of a parse-tree.
+– There is a node for each attribute;
+– If attribute
+
+
+Evaluation Order
+• The evaluation order of semantic rules depends from a Topological Sort
+derived from the dependency graph.
+• Topological Sort: Any ordering
+m
+1, m
+2, . . . , m
+k such that if
+m
+i
+→
+m
+j
+is a link in the dependency graph then
+m
+i < m
+j .
+• Any topological sort of a dependency graph gives a valid order to evaluate
+the semantic rules.
+b depends on an attribute
+c there is a link from the node for
+c
+to the node for
+b
+(
+b
+←
+c).
+• Dependency Rule: If an attribute
+b depends from an attribute
+c, then we
+need to fire the semantic rule for
+c first and then the semantic rule for
+b.
+
+
+Evaluation Order
+• The evaluation order of semantic rules depends from a Topological Sort
+derived from the dependency graph.
+• Topological Sort: Any ordering
+m
+1, m
+2, . . . , m
+k such that if
+m
+i
+→
+m
+j
+is a link in the dependency graph then
+m
+i < m
+j .
+• Any topological sort of a dependency graph gives a valid order to evaluate
+the semantic rules.
+
+
+建依赖图， 先检测图的环。 
+• Attributes can be evaluated by building a dependency graph at compile-time
+and then finding a topological sort.
+• Disavantages
+1. This method fails if the dependency graph has a cycle: We need a test for
+non-circularity;
+2. This method is time consuming due to the construction of the dependency
+graph.
+
+
+Alternative Approach. Design the syntax directed definition in such a
+way that attributes can be evaluated with a fixed order avoiding to build the
+dependency graph (method followed by many compilers).
+
+
+Strongly Non-Circular Syntax Directed Definitions
+• Strongly Non-Circular Syntax Directed Definitions. Formalisms for
+which an attribute evaluation order can be fixed at compiler construction
+time.
+– They form a class that is less general than the class of non-circular
+definitions.
+– In the following we illustrate two kinds of strictly non-circular definitions:
+S-Attributed and L-Attributed Definitions.
+
+
+Summary
+• Syntax Directed Translations
+• Syntax Directed Definitions
+• Implementing Syntax Directed Definitions
+– Dependency Graphs
+– S-Attributed Definitions
+– L-Attributed Definitions
+• Translation Schemes
+
+
+Evaluation of S-Attributed Definitions
+• Synthesized Attributes can be evaluated by a bottom-up parser as the
+input is being analyzed avoiding the construction of a dependency graph.
+• The parser keeps the values of the synthesized attributes in its stack.
+• Whenever a reduction
+A→α is made, the attribute for
+A is computed from
+the attributes of
+α which appear on the stack.
+• Thus, a translator for an S-Attributed Definition can be simply implemented
+by extending the stack of an LR-Parser.
+
+example:::
+Parsing-Time Evaluation of Translation Schemes
