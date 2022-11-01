@@ -346,3 +346,215 @@ by extending the stack of an LR-Parser.
 
 example:::
 Parsing-Time Evaluation of Translation Schemes
+
+
+a semantic stack
+
+
+
+Formal Languages and Compilers
+Formal Languages and Compilers
+
+
+
+<class,string> -----> [parser] ----> parse tree -------> [semantic analysis] ----> intermediate code
+<class,string> -----> [parser] ----> parse tree -------> [semantic analysis] ----> intermediate code
+
+
+
+intermediate code generation
+ tree form 
+
+
+ayntax tree , dag. 
+linear form
+
+
+Quadruples,Triples,Indirect Triples
+
+Type checking
+
+Type checking is a major component of semantic analysis. Broadly
+speaking, the type system of a programming language gives the programmer a way to make verifiable assertions that the compiler can check automatically. This allows for the detection of errors at compile-time, instead
+of at runtime.
+Different programming languages have different approaches to type
+checking. Some languages (like C) have a rather weak type system, so it
+is possible to make serious errors if you are not careful. Other languages
+(like Ada) have very strong type systems, but this makes it more difficult
+to write a program that will compile at all!
+Before we can perform type checking, we must determine the type of
+each identifier used in an expression. However, the mapping between
+variable names and their actual storage locations is not immediately obvious. A variable x in an expression could refer to a local variable, a function parameter, a global variable, or something else entirely. We solve this
+problem by performing name resolution, in which each definition of a
+variable is entered into a symbol table. This table is referenced throughout
+the semantic analysis stage whenever we need to evaluate the correctness
+of some code.
+
+
+atomic type::
+The atomic types of a language are the simple types used to describe
+individual variables that are typically (though not always) stored in single
+registers in assembly language: integers, floating point numbers, boolean
+values, and so forth.
+
+
+compiler maintain 2 types of symbol table:
+global symbol table
+scope symbol table
+
+scope stack.
+To accommodate these multiple definitions, we will structure our symbol table as a stack of hash tables, as shown in Figure 7.2. Each hash table
+maps the names in a given scope to their corresponding symbols. This
+allows a symbol (like x) to exist in multiple scopes without conflict. As
+we proceed through the program, we will push a new table every time a
+scope is entered, and pop a table every time a scope is left
+
+symbol table:::
+The Symbol Table is the major inherited attribute and the major
+data structure as well.
+• Symbol Tables store information about the name, type, scope and
+allocation size.
+• Symbol Table must maintain efficiency against insertion and
+lookup.
+• Dynamic data structures must be used to implement a symbol
+table: Linked Lists and Hash Tables are the most used.
+I Each entry has the form of a record with a field for each peace of
+information
+
+
+ Symbol Table
+I Scope Rules and Symbol Tables
+I Translation Schemes for building Symbol Tables
+
+
+Symbol Tables and Scope Rules
+• A Block in a programming language is any set of language
+constructs that can contain declarations.
+• A language is Block Structured if
+1 Blocks can be nested inside other blocks, and
+2 The Scope of declarations in a block is limited to that block and the
+blocks contained in that block.
+• Most Closely Nested Rule. Given several different declarations
+for the same identifier, the declaration that applies is the one in
+the most closely nested block.
+
+
+
+ Scope Information
+
+
+
+Keeping Track of Scope Information (Cont.)
+The semantic rules make use of the following procedures and stack
+variables:
+1 mktable(previous) creates a new symbol table and returns its
+pointer. The argument previous is the pointer to the enclosing
+procedure.
+2 The stack tblptr holds pointers to symbol tables of the enclosing
+procedures.
+3 The stack offset keeps track of the relative address w.r.t. a given
+nesting level.
+4 enter(table,name,type,offset) creates a new entry for the identifier
+name in the symbol table pointed to by table, specifying its type
+and offset.
+5 addwidth(table,width) records the cumulative width of all the
+entries in table in the header of the symbol table.
+6 enterproc(table,name,newtable) creates a new entry for procedure
+name in the symbol table pointed to by table. The argument
+newtable points to the symbol table for this procedure name.
+
+
+– Lifetime is a dynamic (run-time) concept 
+– Scope is a static concept
+
+
+Activation Trees
+A program is a sequence of instructions combined into a number of procedures. Instructions in a procedure are executed sequentially.
+
+
+First and foremost, the "pass by value vs. pass by reference" distinction as defined in the CS theory is now obsolete because the technique originally defined as "pass by reference" has since fallen out of favor and is seldom used now.1
+
+Newer languages2 tend to use a different (but similar) pair of techniques to achieve the same effects (see below) which is the primary source of confusion.
+
+A secondary source of confusion is the fact that in "pass by reference", "reference" has a narrower meaning than the general term "reference" (because the phrase predates it).
+
+Now, the authentic definition is:
+
+When a parameter is passed by reference, the caller and the callee use the same variable for the parameter. If the callee modifies the parameter variable, the effect is visible to the caller's variable.
+
+When a parameter is passed by value, the caller and callee have two independent variables with the same value. If the callee modifies the parameter variable, the effect is not visible to the caller.
+
+Things to note in this definition are:
+
+"Variable" here means the caller's (local or global) variable itself -- i.e. if I pass a local variable by reference and assign to it, I'll change the caller's variable itself, not e.g. whatever it is pointing to if it's a pointer.
+
+This is now considered bad practice (as an implicit dependency). As such, virtually all newer languages are exclusively, or almost exclusively pass-by-value. Pass-by-reference is now chiefly used in the form of "output/inout arguments" in languages where a function cannot return more than one value.
+The meaning of "reference" in "pass by reference". The difference with the general "reference" term is that this "reference" is temporary and implicit. What the callee basically gets is a "variable" that is somehow "the same" as the original one. How specifically this effect is achieved is irrelevant (e.g. the language may also expose some implementation details -- addresses, pointers, dereferencing -- this is all irrelevant; if the net effect is this, it's pass-by-reference).
+
+Now, in modern languages, variables tend to be of "reference types" (another concept invented later than "pass by reference" and inspired by it), i.e. the actual object data is stored separately somewhere (usually, on the heap), and only "references" to it are ever held in variables and passed as parameters.3
+
+Passing such a reference falls under pass-by-value because a variable's value is technically the reference itself, not the referred object. However, the net effect on the program can be the same as either pass-by-value or pass-by-reference:
+
+If a reference is just taken from a caller's variable and passed as an argument, this has the same effect as pass-by-reference: if the referred object is mutated in the callee, the caller will see the change.
+However, if a variable holding this reference is reassigned, it will stop pointing to that object, so any further operations on this variable will instead affect whatever it is pointing to now.
+To have the same effect as pass-by-value, a copy of the object is made at some point. Options include:
+The caller can just make a private copy before the call and give the callee a reference to that instead.
+In some languages, some object types are "immutable": any operation on them that seems to alter the value actually creates a completely new object without affecting the original one. So, passing an object of such a type as an argument always has the effect of pass-by-value: a copy for the callee will be made automatically if and when it needs a change, and the caller's object will never be affected.
+In functional languages, all objects are immutable.
+As you may see, this pair of techniques is almost the same as those in the definition, only with a level of indirection: just replace "variable" with "referenced object".
+
+There's no agreed-upon name for them, which leads to contorted explanations like "call by value where the value is a reference". In 1975, Barbara Liskov suggested the term "call-by-object-sharing" (or sometimes just "call-by-sharing") though it never quite caught on. Moreover, neither of these phrases draws a parallel with the original pair. No wonder the old terms ended up being reused in the absence of anything better, leading to confusion.4
+
+(I would use the terms "new" or "indirect" pass-by-value/pass-by-reference for the new techniques.)
+
+
+
+interpreter
+In computer science, an interpreter is a computer program that directly executes instructions written in a programming or scripting language, without requiring them previously to have been compiled into a machine language program. An interpreter generally uses one of the following strategies for program execution:
+
+Parse the source code and perform its behavior directly;
+Translate source code into some efficient intermediate representation or object code and immediately execute that;
+Explicitly execute stored precompiled bytecode[1] made by a compiler and matched with the interpreter Virtual Machine.
+
+
+Abstract
+In CPython, the compilation from source code to bytecode involves several steps:
+
+Tokenize the source code (Parser/tokenizer.c)
+
+Parse the stream of tokens into an Abstract Syntax Tree (Parser/parser.c)
+
+Transform AST into a Control Flow Graph (Python/compile.c)
+
+Emit bytecode based on the Control Flow Graph (Python/compile.c)
+
+
+Tokenize the source code (Parser/tokenizer.c)
+
+Parse the stream of tokens into an Abstract Syntax Tree (Parser/parser.c)
+
+Transform AST into a Control Flow Graph (Python/compile.c)
+
+Emit bytecode based on the Control Flow Graph (Python/compile.c)
+
+
+TAC:
+three-address code[1] (often abbreviated to TAC or 3AC) is an intermediate code used by optimizing compilers to aid in the implementation of code-improving transformations. Each TAC instruction has at most three operands and is typically a combination of assignment and a binary operator. For example, t1 := t2 + t3. The name derives from the use of three operands in these statements even though instructions with fewer operands may occur.
+
+CONTROL FLOW GRAPH: CFG
+Flow Graphs
+
+
+CSC402/CSC502 Homepage
+Programming Language Implementation
+
+Fall 2017
+https://homepage.cs.uri.edu/faculty/hamel/courses/2017/fall2017/csc402/
+
+
+Most programming language processors are
+made up of one or more three main building
+blocks:
+l Syntax Analysis – program text/structure analysis
+l Semantic Analysis – program behavior analysis
+l Code Generation
