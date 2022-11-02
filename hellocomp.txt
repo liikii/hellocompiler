@@ -558,3 +558,74 @@ blocks:
 l Syntax Analysis – program text/structure analysis
 l Semantic Analysis – program behavior analysis
 l Code Generation
+
+
+Grammars
+l Grammars can readily express the structure of phrases 
+in programming languages
+l stmt: function-def | return-stmt | if-stmt | while-stmt
+l function-def: function name expr stmt
+l return-stmt : return expr
+l if-stmt : if expr then stmt else stmt endif
+l while-stmt: while expr do stmt enddo
+
+
+
+http://www.dabeaz.com/ply/ply.html
+
+
+
+Syntactic vs Semantic Errors
+l Semantic errors are errors in the behavior of the 
+program and cannot be detected by the parser.
+l Programs with semantic errors are usually syntactically 
+correct
+l A certain class of these semantic errors can be caught 
+by the interpreter/compiler. Consider:
+declare x = 10;
+put x + 1;
+declare x = 20;
+put x + 2;
+l Here we are redeclaring the variable ‘
+x
+’ which is not 
+legal in many programming languages.
+l Many other semantic errors cannot be detected by the 
+interpreter/compiler and show up as “bugs” in the 
+program
+
+
+Observations on Compilers
+l Compilers do not compute values (as 
+interpreters do)
+l Compilers validate the source program, 
+making sure that the intended behavior is 
+correct but do not execute it
+l Compilers generate code for the target 
+machine that then executes the intended 
+behavior
+
+
+I. By Value
+l Also called ‘
+copy-in’
+l Simplest method
+l Widely used
+l The only method in Java
+For by-value parameter passing, the formal parameter 
+is just like a local variable in the activation record of 
+the called method, with one important difference: it is 
+initialized using the value of the corresponding actual 
+parameter, before the called method begins executing.
+
+
+l The difference between call statements and call 
+expressions:
+l Call statements – return value of a function is ignored
+l Call expressions – function has to provide a return value
+
+
+ The compiler has three phases: 
+l frontend, 
+l semantic analysis/tree rewrting, 
+l code generation.
