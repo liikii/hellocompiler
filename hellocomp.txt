@@ -629,3 +629,10 @@ l Call expressions – function has to provide a return value
 l frontend, 
 l semantic analysis/tree rewrting, 
 l code generation.
+
+
+observations:
+(1) converting a value of a subtype to a value of the supertype is
+called a widening type conversion. (safe)
+(2) converting a value of a supertype to a value of a subtype is
+called a narrowing type conversion. (not safe - information loss)
